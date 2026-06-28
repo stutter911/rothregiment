@@ -1,357 +1,64 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Financial Preparedness for Service Members | Roth Regiment</title>
-    <style>
-        :root {
-            --primary-color: #1b4332;
-            --secondary-color: #40916c;
-            --alert-color: #dc3545;
-            --light-bg: #f8f9fa;
-            --dark-text: #212529;
-        }
-        
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-        }
+import streamlit as st
 
-        body {
-            background-color: var(--light-bg);
-            color: var(--dark-text);
-            line-height: 1.6;
-        }
+# 1. Page Configuration & Official Campaign Branding
+st.set_page_config(
+    page_title="Financial Preparedness for Service Members | Roth Regiment", 
+    page_icon="🪖", 
+    layout="centered"
+)
 
-        header {
-            background: white;
-            padding: 2rem 1.5rem;
-            text-align: center;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-        }
+st.title("🪖 Financial Preparedness for Service Members")
+st.subheader("Roth Regiment Protection Engine")
+st.write("The Servicemembers Civil Relief Act (SCRA) legally commands lenders to cap all pre-service debts at **6.00% APR**. Use this engine to calculate your hidden savings and generate your legal deployment protection letter.")
 
-        .logo-container {
-            max-width: 280px;
-            margin: 0 auto 1rem auto;
-        }
+st.markdown("---")
 
-        .logo-container img {
-            width: 100%;
-            height: auto;
-            display: block;
-            object-fit: contain;
-        }
+# 2. Operational Inputs
+st.sidebar.header("Operational Inputs")
+branch = st.sidebar.selectbox("Branch of Service", ["Army", "Navy", "Marine Corps", "Air Force", "Space Force", "Coast Guard"])
+current_apr = st.sidebar.number_input("Current Loan APR (%)", min_value=6.1, max_value=35.0, value=18.0, step=0.1)
+loan_balance = st.sidebar.number_input("Current Principal Balance ($)", min_value=500, max_value=100000, value=25000, step=500)
 
-        header h1 {
-            font-size: 1.8rem;
-            color: var(--primary-color);
-            margin-bottom: 0.5rem;
-        }
+# 3. Tactical Financial Calculations
+scra_cap = 6.0
+apr_delta = current_apr - scra_cap
+annual_savings = (loan_balance * (apr_delta / 100.0))
+monthly_savings = annual_savings / 12.0
 
-        .container {
-            max-width: 1100px;
-            margin: 2rem auto;
-            padding: 0 1rem;
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 2rem;
-        }
+# 4. Display the Financial Intel
+st.header("🚨 Financial Intelligence Report")
 
-        @media (min-width: 768px) {
-            .container {
-                grid-template-columns: 1.2fr 0.8fr;
-            }
-            .full-width {
-                grid-column: span 2;
-            }
-        }
+col1, col2 = st.columns(2)
+with col1:
+    st.metric(label="Your Monthly Recovered Cash", value=f"${monthly_savings:,.2f}")
+with col2:
+    st.metric(label="Your Immediate Annual Savings", value=f"${annual_savings:,.2f}")
 
-        .card {
-            background: white;
-            padding: 2rem;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-            margin-bottom: 1rem;
-        }
+st.subheader("⚖️ Legal Assessment")
+st.error(f"Your current lender is charging you **{apr_delta:.2f}% over the legal SCRA maximum**. They are legally required to slash your interest rate and refund any overpayments back to your date of entry onto active duty.")
 
-        h2 { color: var(--primary-color); margin-bottom: 1rem; border-bottom: 2px solid #e9f5ed; padding-bottom: 0.5rem; }
-        p { margin-bottom: 1rem; color: #555; }
+st.markdown("---")
 
-        .form-group {
-            margin-bottom: 1.25rem;
-        }
+# 5. Automated Legal Form Generator
+st.subheader("📋 Direct Action Document")
+st.write("Copy the finalized formal text block below, insert your personal data, and route it straight to your lender's customer service terminal via certified mail:")
 
-        label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 600;
-        }
+legal_letter = f"""[Your Name]
+[Your Mailing Address]
+Date: 2026
 
-        input, select, textarea {
-            width: 100%;
-            padding: 0.75rem;
-            border: 1px solid #ced4da;
-            border-radius: 4px;
-            font-size: 1rem;
-        }
+TO: [Lender/Bank Name]
+Attn: SCRA Compliance Department
 
-        textarea {
-            font-family: monospace;
-            background-color: #f8f9fa;
-            resize: vertical;
-        }
+RE: Request for SCRA Interest Rate Reduction to 6% (Account Number: [Your Account Number])
 
-        button {
-            width: 100%;
-            padding: 0.75rem;
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            border-radius: 4px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
+Pursuant to the Servicemembers Civil Relief Act (SCRA), 50 U.S.C. § 3937, I am formally requesting that the interest rate on my pre-service loan obligation be capped at the legal maximum of 6% effective from my active-duty enlistment start date.
 
-        button:hover {
-            background-color: var(--secondary-color);
-        }
+My enlistment profile places me on active service with the United States {branch}. Under federal protection metrics, this rate limitation applies unconditionally to all obligations incurred prior to entering military service. Please adjust my principal balance calculations, reduce my monthly payment obligations immediately, and issue an account statement validating the adjustment.
 
-        /* Metrics layout matching original Streamlit look */
-        .metrics-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-            margin: 1.5rem 0;
-        }
+Thank you for your prompt compliance with federal defense guidelines.
 
-        .metric-card {
-            background: #f1f8f5;
-            padding: 1rem;
-            border-radius: 6px;
-            text-align: center;
-            border: 1px solid #d8ede2;
-        }
+Sincerely,
+[Your Signature]"""
 
-        .metric-label { font-size: 0.9rem; color: #666; font-weight: 600; }
-        .metric-value { font-size: 1.6rem; font-weight: bold; color: var(--secondary-color); margin-top: 0.25rem; }
-
-        .error-box {
-            padding: 1rem;
-            background: #f8d7da;
-            border-left: 4px solid var(--alert-color);
-            color: #721c24;
-            border-radius: 4px;
-            margin-bottom: 1.5rem;
-        }
-
-        .result-section { display: none; }
-
-        /* Tiers Grid Styling */
-        .tiers-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 1.5rem;
-            margin-top: 1rem;
-        }
-        @media (min-width: 768px) {
-            .tiers-grid { grid-template-columns: 1fr 1fr; }
-        }
-        .tier-card {
-            border: 1px solid #e0e0e0;
-            border-radius: 6px;
-            padding: 1.5rem;
-            text-align: center;
-        }
-        .tier-card.premium { border: 2px solid var(--secondary-color); background: #fdfdfd; position: relative; }
-        .tier-badge { background: var(--secondary-color); color: white; padding: 0.25rem 0.5rem; font-size: 0.8rem; border-radius: 4px; position: absolute; top: -12px; left: 50%; transform: translateX(-50%); }
-
-        /* Blog Section */
-        .blog-post {
-            margin-bottom: 1.5rem;
-            padding-bottom: 1.5rem;
-            border-bottom: 1px dashed #ced4da;
-        }
-        .blog-post:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
-        .blog-date { font-size: 0.85rem; color: #888; }
-    </style>
-</head>
-<body>
-
-    <header>
-        <div class="logo-container">
-            <img src="Screenshot 2026-01-01 085859.png" alt="Roth Regiment Logo">
-        </div>
-        <h1>Financial Preparedness for Service Members</h1>
-        <p style="color: var(--secondary-color); font-weight: 600;">Roth Regiment Protection Engine</p>
-    </header>
-
-    <main class="container">
-        
-        <!-- Left Side: Interactive Calculations (The Core Engine) -->
-        <div class="left-column">
-            <section class="card">
-                <h2>Operational Inputs</h2>
-                <p>The Servicemembers Civil Relief Act (SCRA) legally commands lenders to cap all pre-service debts at <strong>6.00% APR</strong>. Use this engine to calculate your hidden savings.</p>
-                
-                <div class="form-group">
-                    <label for="branch">Branch of Service</label>
-                    <select id="branch" onchange="updateLetter()">
-                        <option value="Army">Army</option>
-                        <option value="Navy">Navy</option>
-                        <option value="Marine Corps">Marine Corps</option>
-                        <option value="Air Force">Air Force</option>
-                        <option value="Space Force">Space Force</option>
-                        <option value="Coast Guard">Coast Guard</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="debt">Current Principal Balance ($)</label>
-                    <input type="number" id="debt" value="25000" min="500" step="500">
-                </div>
-
-                <div class="form-group">
-                    <label for="rate">Current Loan APR (%)</label>
-                    <input type="number" id="rate" value="18.0" min="6.1" max="35.0" step="0.1">
-                </div>
-
-                <button onclick="runTacticalAudit()">Run Compliance Audit</button>
-            </section>
-
-            <!-- Intelligence Report & Document Box (Reveals on submission) -->
-            <div id="audit-results" class="result-section">
-                <section class="card">
-                    <h2>🚨 Financial Intelligence Report</h2>
-                    
-                    <div class="metrics-grid">
-                        <div class="metric-card">
-                            <div class="metric-label">Monthly Recovered Cash</div>
-                            <div id="monthly-val" class="metric-value">$0.00</div>
-                        </div>
-                        <div class="metric-card">
-                            <div class="metric-label">Immediate Annual Savings</div>
-                            <div id="annual-val" class="metric-value">$0.00</div>
-                        </div>
-                    </div>
-
-                    <div class="error-box">
-                        <strong>⚖️ Legal Assessment:</strong> <span id="legal-assessment-text"></span>
-                    </div>
-
-                    <h2>📋 Direct Action Document</h2>
-                    <p>Copy the finalized formal text block below, insert your personal data, and route it straight to your lender's customer service terminal via certified mail:</p>
-                    
-                    <div class="form-group">
-                        <label for="legal-letter-box">Official Protection Request Handoff Letter (Copy/Paste)</label>
-                        <textarea id="legal-letter-box" rows="14" readonly></textarea>
-                    </div>
-                </section>
-            </div>
-        </div>
-
-        <!-- Right Side: Lead Capture Form -->
-        <div class="right-column">
-            <section class="card">
-                <h2>Request Official Compliance Packet</h2>
-                <p>Secure your legally mandated interest limits and structural exclusions immediately.</p>
-                
-                <form action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
-                    <div class="form-group">
-                        <label for="lead-name">Full Name</label>
-                        <input type="text" id="lead-name" name="name" required placeholder="John Doe">
-                    </div>
-                    <div class="form-group">
-                        <label for="lead-email">Military Email (.mil or personal)</label>
-                        <input type="email" id="lead-email" name="email" required placeholder="john.doe@mail.mil">
-                    </div>
-                    <button type="submit">Submit Secure Request</button>
-                </form>
-            </section>
-        </div>
-
-        <!-- Full Width Bottom Section: Membership Tiers (Option 1) -->
-        <div class="full-width">
-            <section class="card">
-                <h2>🛡️ Operational Membership Tiers</h2>
-                <p>Select your tier of comprehensive financial protection and auditing coverage.</p>
-                
-                <div class="tiers-grid">
-                    <div class="tier-card">
-                        <h3>Basic Regiment Profile</h3>
-                        <p style="font-size: 1.5rem; font-weight: bold; color: var(--primary-color); margin: 0.5rem 0;">Free</p>
-                        <p>Access to automated calculation templates and general protection document layouts.</p>
-                    </div>
-                    <div class="tier-card premium">
-                        <div class="tier-badge">Most Popular</div>
-                        <h3>Full Combat Audit Tier</h3>
-                        <p style="font-size: 1.5rem; font-weight: bold; color: var(--primary-color); margin: 0.5rem 0;">Premium</p>
-                        <p>Complete custom letter preparation, specialized certified mail tracking templates, and comprehensive active lender protection oversight.</p>
-                    </div>
-                </div>
-            </section>
-        </div>
-
-        <!-- Full Width Bottom Section: Intelligence & Blogs (Option 1) -->
-        <div class="full-width">
-            <section class="card">
-                <h2>📰 Intel briefings & Operations Blog</h2>
-                
-                <div class="blog-post">
-                    <h3>Maximizing Your SCRA Protections in 2026</h3>
-                    <p class="blog-date">Published: January 1, 2026</p>
-                    <p>Understanding how interest reductions apply retroactively back to your exact initial military entry dates can secure significant backend refunds from major credit providers.</p>
-                </div>
-
-                <div class="blog-post">
-                    <h3>Pre-Service Credit Rules Explained</h3>
-                    <p class="blog-date">Published: December 15, 2025</p>
-                    <p>A breakdown of what qualifies under the 6% rate protection caps, covering automobile financing, signature personal lines, and revolving credit obligations.</p>
-                </div>
-            </section>
-        </div>
-
-    </main>
-
-    <script>
-        function runTacticalAudit() {
-            const debt = parseFloat(document.getElementById('debt').value);
-            const rate = parseFloat(document.getElementById('rate').value);
-            const branch = document.getElementById('branch').value;
-
-            if (isNaN(debt) || isNaN(rate) || debt <= 0 || rate <= 6) {
-                alert('Please enter a valid loan balance and a current APR higher than 6.0%.');
-                return;
-            }
-
-            const delta = rate - 6.0;
-            const annualSavings = debt * (delta / 100.0);
-            const monthlySavings = annualSavings / 12.0;
-
-            // Update metrics display
-            document.getElementById('monthly-val').innerText = `$${monthlySavings.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
-            document.getElementById('annual-val').innerText = `$${annualSavings.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
-
-            // Update assessment warning text
-            document.getElementById('legal-assessment-text').innerHTML = `Your current lender is charging you <strong>${delta.toFixed(2)}% over the legal SCRA maximum</strong>. They are legally required to slash your interest rate and refund any overpayments back to your date of entry onto active duty.`;
-
-            // Build and display letter text
-            updateLetter();
-
-            // Reveal hidden sections smoothly
-            document.getElementById('audit-results').style.display = 'block';
-        }
-
-        function updateLetter() {
-            const branch = document.getElementById('branch').value;
-            const letterText = `[Your Name]\n[Your Mailing Address]\nDate: 2026\n\nTO: [Lender/Bank Name]\nAttn: SCRA Compliance Department\n\nRE: Request for SCRA Interest Rate Reduction to 6% (Account Number: [Your Account Number])\n\nPursuant to the Servicemembers Civil Relief Act (SCRA), 50 U.S.C. § 3937, I am formally requesting that the interest rate on my pre-service loan obligation be capped at the legal maximum of 6% effective from my active-duty enlistment start date.\n\nMy enlistment profile places me on active service with the United States ${branch}. Under federal protection metrics, this rate limitation applies unconditionally to all obligations incurred prior to entering military service. Please adjust my principal balance calculations, reduce my monthly payment obligations immediately, and issue an account statement validating the adjustment.\n\nThank you for your prompt compliance with federal defense guidelines.\n\nSincerely,\n[Your Signature]`;
-            
-            document.getElementById('legal-letter-box').value = letterText;
-        }
-    </script>
-</body>
-</html>
+st.text_area(label="Official Protection Request Handoff Letter (Copy/Paste)", value=legal_letter, height=350)
