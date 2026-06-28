@@ -1,10 +1,14 @@
 import streamlit as st
 
-# 1. Page Configuration & Tactical Theme Branding
-st.set_page_config(page_title="Roth Regiment | SCRA Interest Engine", page_icon="🪖", layout="centered")
+# 1. Page Configuration & Official Campaign Branding
+st.set_page_config(
+    page_title="Financial Preparedness for Service Members | Roth Regiment", 
+    page_icon="🪖", 
+    layout="centered"
+)
 
-st.title("🪖 ROTH REGIMENT")
-st.subheader("SCRA Financial Protection Engine")
+st.title("🪖 Financial Preparedness for Service Members")
+st.subheader("Roth Regiment Protection Engine")
 st.write("The Servicemembers Civil Relief Act (SCRA) legally commands lenders to cap all pre-service debts at **6.00% APR**. Use this engine to calculate your hidden savings and generate your legal deployment protection letter.")
 
 st.markdown("---")
